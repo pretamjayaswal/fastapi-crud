@@ -21,16 +21,20 @@ def read_root():
 # READ - All courses
 @app.get('/courses')
 def get_coursees() -> list:
-    if not fakedb:
+    # return fakedb
+    if fakedb:
         return fakedb
     else:
-        {"Msg":"--No Courses Found--"}
+        return [{"Msg":"No Courses Found"}]
 
 # READ - Single Course
 @app.get('/courses/{course_id}')
 def get_a_course(course_id : int):
-    course = course_id - 1
-    return fakedb[course]
+    for course in fakedb:
+        if course['id'] == course_id:
+            return course
+    
+    return {"msg":"No Course found with id"}
 
 # CREATE/UPDATE
 @app.post('/courses')
@@ -41,7 +45,10 @@ def add_course(course: Course):
 # DELETE
 @app.delete('/courses/{course_id}')
 def delete_course(course_id : int):
-    fakedb.pop(course_id- 1)
-    return {"task":"deletion success"}
+    for i,course in enumerate(fakedb):
+        if course['id'] == course_id:
+            fakedb.pop(i)
+            return {"task":"deletion success for id"+str(course_id)}
+    return {"task":"Id not found/Deletion Failed for id "+str(course_id)}
 
 
